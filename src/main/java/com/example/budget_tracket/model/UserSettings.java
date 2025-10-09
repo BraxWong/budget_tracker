@@ -11,11 +11,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 
 @Entity
-@Table(name= "user_settings")
+@Table(name= "UserSettings")
 public class UserSettings {
 	
 	@Id
@@ -26,10 +28,15 @@ public class UserSettings {
 	private int monthlySpendingPercentage;
 	private int monthlySavingPercentage;
 	private float monthlyIncome;
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private List<FinancialGoal> financialGoals;
 	private boolean notificationEnabled;
 	private boolean backupEnabled;
+	
+	public UserSettings() {
+		
+	}
 	
 	public UserSettings(String username, int monthlySpendingPercentage, int monthlySavingPercentage, float monthlyIncome, List<FinancialGoal> financialGoals, boolean notificationEnabled, boolean backupEnabled ) {
 		this.username = username;
