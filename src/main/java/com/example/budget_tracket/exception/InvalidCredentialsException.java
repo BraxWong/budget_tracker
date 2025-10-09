@@ -13,10 +13,10 @@ public class InvalidCredentialsException extends RuntimeException {
     private final String message;
 
     public InvalidCredentialsException(InvalidCredentialsError error) {
-        this.message = generateMessage(error);
+        this.message = generateErrorMessage(error);
     }
 
-    private String generateMessage(InvalidCredentialsError error) {
+    private String generateErrorMessage(InvalidCredentialsError error) {
         if (error == InvalidCredentialsError.PASSWORD_LENGTH) {
             return "The password has to be 14 characters or longer";
         } else if (error == InvalidCredentialsError.PASSWORD_DUPLICATION){

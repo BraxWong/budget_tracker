@@ -6,10 +6,13 @@ import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
-@Table(name="financial_goal")
+@Table(name="FinancialGoal")
 public class FinancialGoal {
 	
 	@Id
@@ -18,6 +21,17 @@ public class FinancialGoal {
 	
 	private String goal;
 	private boolean achieved;
+	
+	//TODO: Should add goal start date and end date, need to modify the table for that as well
+	
+	@ManyToOne
+    @JoinColumn(name = "user_settings_id", nullable = false)
+	@JsonIgnore
+	private UserSettings userSettings;
+	
+	public FinancialGoal() {
+		
+	}
 	
 	public FinancialGoal(String goal, boolean achieved) {
 		this.goal = goal;
@@ -40,4 +54,11 @@ public class FinancialGoal {
 		this.achieved = achieved;
 	}
 	
+	public void setUserSettings(UserSettings userSettings) {
+		this.userSettings = userSettings;
+	}
+	
+	public UserSettings getUserSettings() {
+		return this.userSettings;
+	}
 }
