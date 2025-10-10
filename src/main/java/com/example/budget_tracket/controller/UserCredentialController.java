@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.budget_tracket.exception.InvalidCredentialsException;
 import com.example.budget_tracket.exception.InvalidCredentialsException.InvalidCredentialsError;
+import com.example.budget_tracket.model.BudgetEntries;
 import com.example.budget_tracket.model.UserCredential;
 import com.example.budget_tracket.model.UserSettings;
 import com.example.budget_tracket.repository.UserCredentialRepository;
@@ -75,7 +76,8 @@ public class UserCredentialController {
         	throw new InvalidCredentialsException(InvalidCredentialsError.USERNAME_DUPLICATION);
         }
         ArrayList<byte[]> passwordInfo = hashing.generatePasswordHash(password);
-        UserCredential userCredential = new UserCredential(username, passwordInfo.get(1), passwordInfo.get(0));
+        List<BudgetEntries> budgetEntries = new ArrayList<>();
+        UserCredential userCredential = new UserCredential(username, passwordInfo.get(1), passwordInfo.get(0), budgetEntries);
         userCredentialRepository.save(userCredential);
         userSettingsController.getUserSettings(username);
     }
