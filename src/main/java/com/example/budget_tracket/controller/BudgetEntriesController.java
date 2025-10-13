@@ -1,4 +1,4 @@
-package com.example.budget_tracket.controller
+package com.example.budget_tracket.controller;
 
 import com.example.budget_tracket.exception.InvalidBudgetEntriesException;
 import com.example.budget_tracket.exception.InvalidCredentialsException;
@@ -8,6 +8,7 @@ import com.example.budget_tracket.model.BudgetEntries;
 import com.example.budget_tracket.model.UserCredential;
 import com.example.budget_tracket.repository.BudgetEntriesRepository;
 import com.example.budget_tracket.repository.UserCredentialRepository;
+import com.example.budget_tracket.util.Util;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,6 +32,9 @@ public class BudgetEntriesController {
 	
 	@Autowired
 	UserCredentialRepository userCredentialRepository;
+	
+	@Autowired
+	Util util;
 	
 	@GetMapping("/all")
 	public List<BudgetEntries> displayAllBudgetEntries() {
@@ -68,13 +72,13 @@ public class BudgetEntriesController {
 	}
 	
 	@RequestMapping(value = "/add_entries", method = RequestMethod.POST)
-	public void addEntries(@RequestParam String username, @RequestParam float amount, @RequestParam String category, @RequestParam LocalDate date, @RequestParam String description) {
+	public void addEntries(@RequestParam String username, @RequestParam float amount, @RequestParam String category, @RequestParam String date, @RequestParam String description) {
 		UserCredential userCredential = userCredentialRepository.findByUsername(username);
 		if(userCredential == null) {
 			throw new InvalidCredentialsException(InvalidCredentialsError.USERNAME_NOT_FOUND);
 		}
 		List<BudgetEntries> budgetEntries = userCredential.getBudgetEntries();
-		BudgetEntries budgetEntry = new BudgetEntries(amount, category, date, description);
+		BudgetEntries budgetEntry = new BudgetEntries(amount, category, util.stringToLocalDate(date), description);
 		budgetEntry.setUserCredential(userCredential);
 		budgetEntries.add(budgetEntry);
 		userCredential.setBudgetEntries(budgetEntries);
@@ -82,7 +86,7 @@ public class BudgetEntriesController {
 	}
 	
 	@RequestMapping(value = "/edit_entries", method = RequestMethod.POST)
-	public void editEntries(@RequestParam String username, @RequestParam String oldDescription, @RequestParam float amount, @RequestParam String category, @RequestParam LocalDate date, @RequestParam String description) {
+	public void editEntries(@RequestParam String username, @RequestParam String oldDescription, @RequestParam float amount, @RequestParam String category, @RequestParam String date, @RequestParam String description) {
 		UserCredential userCredential = userCredentialRepository.findByUsername(username);
 		if(userCredential == null) {
 			throw new InvalidCredentialsException(InvalidCredentialsError.USERNAME_NOT_FOUND);
@@ -91,7 +95,7 @@ public class BudgetEntriesController {
 		for(BudgetEntries budgetEntry: budgetEntries) {
 			if(budgetEntry.getDescription().equals(oldDescription)) {
 				budgetEntry.setAmount(amount);
-				budgetEntry.setDate(date);
+				budgetEntry.setDate(util.stringToLocalDate(date));
 				budgetEntry.setCategory(category);
 				budgetEntry.setDescription(description);
 				userCredential.setBudgetEntries(budgetEntries);

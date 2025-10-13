@@ -1,4 +1,4 @@
-package com.example.budget_tracket.security;
+package com.example.budget_tracket.util;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

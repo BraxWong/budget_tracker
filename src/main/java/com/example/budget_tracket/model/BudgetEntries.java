@@ -1,4 +1,4 @@
-package com.example.budget_tracket.model
+package com.example.budget_tracket.model;
 
 import java.time.*;
 import jakarta.persistence.Entity;
@@ -23,7 +23,7 @@ public class BudgetEntries {
 	private String description;
 	
 	@ManyToOne
-    @JoinColumn(name = "user_settings_id", nullable = false)
+    @JoinColumn(name = "user_credential_id", nullable = false)
 	@JsonIgnore
 	private UserCredential userCredential;
 	

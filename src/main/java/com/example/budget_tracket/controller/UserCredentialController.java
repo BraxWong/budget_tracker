@@ -20,7 +20,7 @@ import com.example.budget_tracket.model.UserCredential;
 import com.example.budget_tracket.model.UserSettings;
 import com.example.budget_tracket.repository.UserCredentialRepository;
 import com.example.budget_tracket.repository.UserSettingsRepository;
-import com.example.budget_tracket.security.Hashing;
+import com.example.budget_tracket.util.Hashing;
 
 @RestController
 @RequestMapping("/UserCredential")
@@ -66,9 +66,7 @@ public class UserCredentialController {
     
     
     @RequestMapping("/create_ac")
-    public void createUserAccount(@RequestBody Map<String, String> payload) {
-    	String username = payload.get("username");
-    	String password = payload.get("password");
+    public void createUserAccount(@RequestParam String username, @RequestParam String password) {
         if (password.length() < 14) {
             throw new InvalidCredentialsException(InvalidCredentialsError.PASSWORD_LENGTH);
         }

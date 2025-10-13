@@ -13,16 +13,18 @@
   - **Status:** Completed
 
 ## 3. Budget Entries
-- [ ] Create a `BudgetEntry` entity to represent individual entries in the budget, including fields such as:
+- [x] Create a `BudgetEntry` entity to represent individual entries in the budget, including fields such as:
   - Amount
   - Category
   - Date
   - Description
-- [ ] Implement RESTful endpoints for CRUD operations on budget entries:
-  - [ ] **Create:** Add new entries.
-  - [ ] **Read:** Retrieve entries for the current month.
-  - [ ] **Update:** Modify existing entries.
-  - [ ] **Delete:** Remove entries.
+  	- **Status:** Completed
+- [x] Implement RESTful endpoints for CRUD operations on budget entries:
+  - [x] **Create:** Add new entries.
+  - [x] **Read:** Retrieve entries for the current month.
+  - [x] **Update:** Modify existing entries.
+  - [x] **Delete:** Remove entries.
+  	- **Status:** Completed
 
 ## 4. Monthly Budget Tracking
 - [ ] Create endpoints to view the total savings, expenses, and balance for the current month.
