@@ -37,7 +37,8 @@
     - **Status:** Completed
 
 ## 6. File Import/Export
-- [ ] Implement functionality to import budget entries from a CSV or JSON file.
+- [x] Implement functionality to import budget entries from a CSV or JSON file.
+	- **Status:** Completed
 - [ ] Create endpoints to export the current month’s budget data to a file.
 
 ## 7. Analytics and Reports
