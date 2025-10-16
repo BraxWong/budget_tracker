@@ -4,7 +4,8 @@ public class InvalidFileException extends RuntimeException{
 	
 	public enum InvalidFileError {
 		FILE_EMPTY,
-		FILE_INVALID
+		FILE_INVALID,
+		JSON_FILE_EXPORT_ERROR
 	}
 	
 	private final String message;
@@ -16,8 +17,10 @@ public class InvalidFileException extends RuntimeException{
 	public String generateErrorMessage(InvalidFileError invalidFileError) {
 		if(invalidFileError == InvalidFileError.FILE_INVALID) {
 			return "The file provided is empty.";
+		} else if(invalidFileError == InvalidFileError.FILE_INVALID) {
+			return "The file provided is invalid.";
 		}
-		return "The file provided is invalid.";
+		return "Error when exporting to JSON file.";
 	}
 	
     @Override

@@ -8,7 +8,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+
 import org.json.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import com.example.budget_tracket.util.Util;
 import com.example.budget_tracket.exception.InvalidCredentialsException;
@@ -19,8 +26,11 @@ import com.example.budget_tracket.model.BudgetEntries;
 import com.example.budget_tracket.model.UserCredential;
 import com.example.budget_tracket.repository.UserCredentialRepository;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,14 +109,61 @@ public class FileController {
 	}
 	
 	@RequestMapping("/export_json")
-	public MultipartFile exportEntriesToJSON(@RequestParam String username) {
+	public ResponseEntity<byte[]> exportEntriesToJSON(@RequestParam String username) {
 		UserCredential userCredential = userCredentialRepository.findByUsername(username);
 		if(userCredential == null) {
 			throw new InvalidCredentialsException(InvalidCredentialsError.USERNAME_NOT_FOUND);
 		}
-		if(file.isEmpty()) {
-			throw new InvalidFileException(InvalidFileError.FILE_EMPTY);
+		List<BudgetEntries> budgetEntries = userCredential.getBudgetEntries();
+		List<BudgetEntries> newList = new ArrayList<>();
+		LocalDate today = LocalDate.now();
+		for(int i = 0; i < budgetEntries.size(); ++i) {
+			LocalDate date = budgetEntries.get(i).getDate();
+			if(date.getMonth() == today.getMonth()) {
+				newList.add(budgetEntries.get(i));
+			}
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		try {
+            byte[] jsonBytes = mapper.writeValueAsBytes(newList);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=budget_entries.json");
+            headers.add("Content-Type", "application/json");
+
+            return new ResponseEntity<>(jsonBytes, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            throw new InvalidFileException(InvalidFileError.JSON_FILE_EXPORT_ERROR);
+       }	
+	}
+	
+	@RequestMapping("/export_csv")
+	public ResponseEntity<byte[]> exportEntriesToCSV(@RequestParam String username) {
+		UserCredential userCredential = userCredentialRepository.findByUsername(username);
+		if(userCredential == null) {
+			throw new InvalidCredentialsException(InvalidCredentialsError.USERNAME_NOT_FOUND);
 		}
 		List<BudgetEntries> budgetEntries = userCredential.getBudgetEntries();
+		String csv = "";
+		LocalDate today = LocalDate.now();
+		for(BudgetEntries budgetEntry : budgetEntries) {
+			if(budgetEntry.getDate().getMonth() == today.getMonth()) {
+				csv += (Float.toString(budgetEntry.getAmount()) + ",");
+				csv += (budgetEntry.getCategory() + ",");
+				csv += (budgetEntry.getDate().toString() + ",");
+				csv += (budgetEntry.getDescription() + "\n");
+			}
+		}
+		
+        byte[] jsonBytes = csv.getBytes();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=budget_entries.csv");
+        headers.add("Content-Type", "text/csv");
+
+        return new ResponseEntity<>(jsonBytes, headers, HttpStatus.OK);
+       
 	}
+	
 }
