@@ -64,44 +64,13 @@ public class UserCredentialController {
     	return "All data from table user_credentials have been removed.";
     }
     
-    
-    @RequestMapping("/create_ac")
-    public void createUserAccount(@RequestParam String username, @RequestParam String password) {
-        if (password.length() < 14) {
-            throw new InvalidCredentialsException(InvalidCredentialsError.PASSWORD_LENGTH);
-        }
-        if(userCredentialRepository.findByUsername(username) != null) {
-        	throw new InvalidCredentialsException(InvalidCredentialsError.USERNAME_DUPLICATION);
-        }
-        ArrayList<byte[]> passwordInfo = hashing.generatePasswordHash(password);
-        List<BudgetEntries> budgetEntries = new ArrayList<>();
-        UserCredential userCredential = new UserCredential(username, passwordInfo.get(1), passwordInfo.get(0), budgetEntries);
-        userCredentialRepository.save(userCredential);
-        userSettingsController.getUserSettings(username);
-    }
-    
-    @RequestMapping("/login")
-    public String userLogin(@RequestBody Map<String, String> payload) {
-    	String username = payload.get("username");
-    	String password = payload.get("password");
-    	UserCredential credential = userCredentialRepository.findByUsername(username);
-    	if(credential == null) {
-    		return "Username not found";
-    	}
-    	if(hashing.verifyPassword(password, credential.getPasswordSalt(), credential.getPassword())) {
-			return "Login Success";
-		}
-		else {
-			return "Incorrect Password";
-		}
-    }
-    
+ 
     @RequestMapping(value = "/update_username", method = RequestMethod.POST)
     public String updateUsername(@RequestParam String oldUsername, @RequestParam String newUsername, @RequestParam String password) {
     	UserCredential credential = userCredentialRepository.findByUsername(oldUsername);
     	UserSettings userSettings = userSettingsRepository.findByUsername(oldUsername);
     	if(credential == null) {
-    		throw new InvalidCredentialsException(InvalidCredentialsError.PASSWORD_LENGTH);
+    		throw new InvalidCredentialsException(InvalidCredentialsError.USERNAME_NOT_FOUND);
     	}
     	if(!hashing.verifyPassword(password, credential.getPasswordSalt(), credential.getPassword())) {
 			throw new InvalidCredentialsException(InvalidCredentialsError.INCORRECT_PASSWORD);
@@ -119,7 +88,7 @@ public class UserCredentialController {
     public String updatePassword(@RequestParam String username, @RequestParam String oldPassword, @RequestParam String newPassword) {
     	UserCredential credential = userCredentialRepository.findByUsername(username);
     	if(credential == null) {
-    		throw new InvalidCredentialsException(InvalidCredentialsError.PASSWORD_LENGTH);
+    		throw new InvalidCredentialsException(InvalidCredentialsError.USERNAME_NOT_FOUND);
     	}
     	if(!hashing.verifyPassword(oldPassword, credential.getPasswordSalt(), credential.getPassword())) {
 			throw new InvalidCredentialsException(InvalidCredentialsError.INCORRECT_PASSWORD);
@@ -130,6 +99,5 @@ public class UserCredentialController {
     	userCredentialRepository.save(credential);
     	return "Account password updated.";
     }
-    
-    
+   
 }

@@ -27,8 +27,10 @@
   	- **Status:** Completed
 
 ## 4. Monthly Budget Tracking
-- [ ] Create endpoints to view the total savings, expenses, and balance for the current month.
-- [ ] Implement filtering options (e.g., by category or date).
+- [x] Create endpoints to view the total savings, expenses, and balance for the current month.
+	- **Status:** Completed
+- [x] Implement filtering options (e.g., by category or date).
+	- **Status:** Completed
 
 ## 5. User Settings Management
 - [x] Allow users to set monthly saving goals.
